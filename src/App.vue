@@ -55,7 +55,7 @@ export default {
 
 <style scoped>
 .main-wrapper {
-	width: 1500px;
+	width: 1600px;
 	max-width: 90%;
 	margin: 0 auto;
 	margin-top: 3rem;
