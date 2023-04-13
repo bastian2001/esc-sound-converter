@@ -269,9 +269,12 @@ export default {
 			const warnings: string[] = []
 			const possibleNotes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 			notes.forEach(note => {
-				if (note.octave < 4)
+				if (note.octave < 4 && note.name !== "P") {
 					if (!warnings.includes("Note too low for BlHeli32")) warnings.push("Note too low for BlHeli32")
-				if (note.octave > 7)
+					console.log(note)
+					console.log(warnings)
+				}
+				if (note.octave > 7 && note.name !== "P")
 					if (!warnings.includes("Note too high for BlHeli32")) warnings.push("Note too high for BlHeli32")
 				const noteIndex = possibleNotes.indexOf(note.name)
 				if (note.name !== "P" && (note.octave < 3 || (note.octave === 3 && noteIndex < 3)))
