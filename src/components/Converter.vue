@@ -326,7 +326,7 @@ export default {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	gap: 1.5rem;
-	margin-bottom: 2rem;
+	margin-bottom: 3rem;
 }
 textarea {
 	width: 100%;
