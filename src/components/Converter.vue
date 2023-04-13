@@ -22,12 +22,22 @@
 			<div class="transpose">
 				<h4>Transpose</h4>
 				<div class="transposeOnceButtons transposeButtons">
-					<button @click="transposeBy(1)"><i class="fa-solid fa-arrow-up"></i></button><br />
-					<button @click="transposeBy(-1)"><i class="fa-solid fa-arrow-down"></i></button>
+					<button @click="transposeBy(1)">
+						<i class="fa-solid fa-arrow-up"></i>&nbsp;
+						<p style="display: inline; font-family: inherit" v-if="transposed > 0">
+							{{ transposed }}
+						</p></button
+					><br />
+					<button @click="transposeBy(-1)">
+						<i class="fa-solid fa-arrow-down"></i>&nbsp;
+						<p style="display: inline; font-family: inherit" v-if="transposed < 0">
+							{{ -transposed }}
+						</p>
+					</button>
 				</div>
 				<div class="transposeOctaveButtons transposeButtons">
-					<button @click="transposeBy(12)"><i class="fa-solid fa-arrow-up"></i> Octave</button><br />
-					<button @click="transposeBy(-12)"><i class="fa-solid fa-arrow-down"></i> Octave</button>
+					<button @click="transposeBy(12)"><i class="fa-solid fa-arrow-up"></i>&nbsp;Octave</button><br />
+					<button @click="transposeBy(-12)"><i class="fa-solid fa-arrow-down"></i>&nbsp;Octave</button>
 				</div>
 			</div>
 			<p class="time" :class="{ red: !timeEqual }"><i class="fa-regular fa-clock"></i>&nbsp;&nbsp;{{ time }} bars</p>
@@ -55,6 +65,7 @@ export default {
 			notes: [] as { duration: number; name: string; octave: number }[],
 			rtttlActive: false,
 			bl32Active: false,
+			transposed: 0,
 		}
 	},
 	methods: {
@@ -128,7 +139,7 @@ export default {
 					}
 				})
 				warnings.push(...this.generateNoteWarnings(notes as { duration: number; name: string; octave: number }[]))
-			}
+			} else this.transposed = 0
 			this.error = errors
 			this.warning = []
 			if (errors.length > 0) {
@@ -191,7 +202,7 @@ export default {
 					}
 				})
 				warnings.push(...this.generateNoteWarnings(notes as { duration: number; name: string; octave: number }[]))
-			}
+			} else this.transposed = 0
 			this.error = errors
 			this.warning = []
 			if (errors.length > 0 && notes.length > 0) {
@@ -251,6 +262,8 @@ export default {
 				else this.transposedown()
 			}
 			this.warning = this.generateNoteWarnings(this.notes)
+			this.transposed += amount
+			if (this.notes.length === 0) this.transposed = 0
 		},
 		generateNoteWarnings(notes: { duration: number; name: string; octave: number }[]): string[] {
 			const warnings: string[] = []
@@ -280,7 +293,7 @@ export default {
 						if (!warnings.includes("Keep pause lengths to 1/1, 1/2, 1/4, ... 1/128 for BlHeli32"))
 							warnings.push("Keep pause lengths to 1/1, 1/2, 1/4, ... 1/128 for BlHeli32")
 				}
-				if (note.name !== "P")
+				if (note.name !== "P" && note.name)
 					if (note.duration !== 1 && note.duration !== 2 && note.duration !== 4 && note.duration !== 8)
 						if (!warnings.includes("BlHeli32 only supports 1/1, 1/2, 1/4, and 1/8 note lengths"))
 							warnings.push("BlHeli32 only supports 1/1, 1/2, 1/4, and 1/8 note lengths")
@@ -310,7 +323,7 @@ export default {
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	gap: 1.5rem;
-	margin-bottom: 3rem;
+	margin-bottom: 2rem;
 }
 textarea {
 	width: 100%;
@@ -326,7 +339,6 @@ textarea {
 	font-family: "Roboto Mono", monospace;
 }
 p {
-	color: #eed;
 	font-family: "Roboto Mono", monospace;
 }
 .transpose {
