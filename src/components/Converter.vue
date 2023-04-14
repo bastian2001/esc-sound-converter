@@ -40,7 +40,13 @@
 					<button @click="transposeBy(-12)"><i class="fa-solid fa-arrow-down"></i>&nbsp;Octave</button>
 				</div>
 			</div>
-			<p class="time" :class="{ red: !timeEqual }"><i class="fa-regular fa-clock"></i>&nbsp;&nbsp;{{ time }} bars</p>
+			<p class="time">
+				<span :class="{ red: !timeEqual }"><i class="fa-regular fa-clock"></i>&nbsp;&nbsp;{{ time }} bars,</span> Gen.
+				Length: <input type="text" v-model="genLen" @input="updateRTTTL" class="genLenInput" />&nbsp;<i
+					class="fa-solid fa-caret-right"
+				></i
+				>&nbsp;{{ timeSec }}
+			</p>
 			<p v-for="e in error"><i class="fa-regular fa-circle-xmark"></i>&nbsp;&nbsp;{{ e }}</p>
 			<p v-for="w in warning"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;&nbsp;{{ w }}</p>
 		</div>
@@ -50,6 +56,7 @@
 <script lang="ts">
 //import notes store
 import { notesStore } from "@/stores/notes"
+import { parse } from "@vue/compiler-dom"
 
 export default {
 	name: "Converter",
@@ -68,6 +75,7 @@ export default {
 			bl32Active: false,
 			transposed: 0,
 			notesStore: notesStore(),
+			genLen: 15,
 		}
 	},
 	methods: {
@@ -97,7 +105,7 @@ export default {
 						const optionValue = parseInt(option.substring(option.search("=") + 1)) || -1
 						if (optionName === "D") defaultLength = optionValue
 						if (optionName === "O") defaultOctave = optionValue
-						// if (optionName === "B") defaultBPM = optionValue
+						if (optionName === "B") defaultBPM = optionValue
 					})
 					if (defaultLength === -1) {
 						if (!warnings.includes("Invalid RTTTL options, defaults will be auto-generated"))
@@ -110,6 +118,7 @@ export default {
 						defaultOctave = 5
 					}
 				}
+				this.notesStore.converters[this.slot || 0].bpm = defaultBPM
 				notes = (notes as string[])[notes.length - 1].split(",")
 				;(notes as string[]).forEach((note, index) => {
 					const firstLetter = note.search(/[a-zA-Z]/)
@@ -160,7 +169,7 @@ export default {
 			) {
 				//this code is still executed because
 				this.notesStore.converters[this.slot || 0].rtttl =
-					"Melody:d=4,o=5,b=125:" +
+					`Melody:d=4,o=5,b=${Math.round(3840 / (this.genLen || 256))}:` +
 					this.notesStore.converters[this.slot || 0].notes
 						.map(note => {
 							if (typeof note === "string") return note
@@ -320,6 +329,9 @@ export default {
 			})
 			return time.toFixed(2)
 		},
+		timeSec(): string {
+			return (60 / this.notesStore.converters[this.slot || 0].bpm) * 4 * parseFloat(this.time) + " sec"
+		},
 		thisConverter() {
 			return this.notesStore.converters[this.slot || 0]
 		},
@@ -333,6 +345,10 @@ export default {
 				this.notesStore.converters[this.slot || 0].updateFlag = false
 				this.updateBL32()
 			}
+		},
+		"thisConverter.bpm": function (bpm: number) {
+			if (bpm <= 0) bpm = 256
+			this.genLen = Math.round(3840 / bpm)
 		},
 	},
 }
@@ -396,5 +412,17 @@ p {
 
 .red {
 	color: #f00;
+}
+
+.genLenInput {
+	border: none;
+	background-color: transparent;
+	color: #eed;
+	width: 3rem;
+	padding: 2px;
+	font-family: "Roboto Mono", monospace;
+	font-size: inherit;
+	border-bottom: 1px solid #eed;
+	outline: none;
 }
 </style>
