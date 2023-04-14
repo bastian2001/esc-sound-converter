@@ -171,6 +171,7 @@ input {
 	box-sizing: border-box;
 	max-height: 15rem;
 	overflow-y: auto;
+	z-index: 1;
 }
 
 .searchResult {
