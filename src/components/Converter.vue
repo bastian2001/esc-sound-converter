@@ -39,16 +39,32 @@
 					<button @click="transposeBy(12)"><i class="fa-solid fa-arrow-up"></i>&nbsp;Octave</button><br />
 					<button @click="transposeBy(-12)"><i class="fa-solid fa-arrow-down"></i>&nbsp;Octave</button>
 				</div>
+				<div class="transposeButtons speedButtons">
+					<button @click="slowDown" style="font-size: 1.5rem"><i class="fa-solid fa-person-walking"></i></button>&nbsp;
+					<button @click="speedUp" style="font-size: 1.5rem"><i class="fa-solid fa-rocket"></i></button>
+				</div>
 			</div>
 			<p class="time">
 				<span :class="{ red: !timeEqual }"><i class="fa-regular fa-clock"></i>&nbsp;&nbsp;{{ time }} bars,</span> Gen.
-				Length: <input type="text" v-model="genLen" @input="updateRTTTL" class="genLenInput" />&nbsp;<i
-					class="fa-solid fa-caret-right"
-				></i
-				>&nbsp;{{ timeSec }}
+				Length:
+				<input
+					type="text"
+					v-model="genLen"
+					@input="
+						$event => {
+							updateRTTTL()
+							thisConverter.calcBPM = 3840 / genLen
+						}
+					"
+					class="genLenInput"
+				/>&nbsp;<i class="fa-solid fa-caret-right"></i>&nbsp;{{ timeSec }}
 			</p>
 			<p v-for="e in error"><i class="fa-regular fa-circle-xmark"></i>&nbsp;&nbsp;{{ e }}</p>
 			<p v-for="w in warning"><i class="fa-solid fa-triangle-exclamation"></i>&nbsp;&nbsp;{{ w }}</p>
+			<p v-if="genLen > 15">
+				<i class="fa-solid fa-triangle-exclamation"></i>&nbsp;&nbsp;Gen. Length too long for BLHeli32. Consider slowing
+				down the notes and halfing the gen. length
+			</p>
 		</div>
 	</div>
 </template>
@@ -88,7 +104,7 @@ export default {
 				.replace(/\s/g, "")
 				.toLocaleUpperCase()
 				.split(":")
-			if (this.notesStore.converters[this.slot || 0].rtttl) {
+			if (this.thisConverter.rtttl) {
 				let defaultLength = -1,
 					defaultOctave = -1,
 					defaultBPM = -1
@@ -118,7 +134,7 @@ export default {
 						defaultOctave = 5
 					}
 				}
-				this.notesStore.converters[this.slot || 0].bpm = defaultBPM
+				this.thisConverter.bpm = defaultBPM
 				notes = (notes as string[])[notes.length - 1].split(",")
 				;(notes as string[]).forEach((note, index) => {
 					const firstLetter = note.search(/[a-zA-Z]/)
@@ -159,18 +175,15 @@ export default {
 				return { errors, warnings }
 			}
 			this.warning = warnings
-			this.notesStore.converters[this.slot || 0].notes = notes as { duration: number; name: string; octave: number }[]
+			this.thisConverter.notes = notes as { duration: number; name: string; octave: number }[]
 			return { errors, warnings }
 		},
 		encodeRTTTL() {
-			if (
-				this.notesStore.converters[this.slot || 0].notes.length &&
-				this.notesStore.converters[this.slot || 0].notes[0].name
-			) {
+			if (this.thisConverter.notes.length && this.thisConverter.notes[0].name) {
 				//this code is still executed because
-				this.notesStore.converters[this.slot || 0].rtttl =
+				this.thisConverter.rtttl =
 					`Melody:d=4,o=5,b=${Math.round(3840 / (this.genLen || 256))}:` +
-					this.notesStore.converters[this.slot || 0].notes
+					this.thisConverter.notes
 						.map(note => {
 							if (typeof note === "string") return note
 							else {
@@ -179,7 +192,7 @@ export default {
 							}
 						})
 						.join(",")
-			} else this.notesStore.converters[this.slot || 0].rtttl = ""
+			} else this.thisConverter.rtttl = ""
 		},
 		decodeBL32(): { errors: string[]; warnings: string[] } {
 			//insert space between notes for splitting. That is always between a number and a letter
@@ -193,7 +206,7 @@ export default {
 				.split(" ")
 			const errors: string[] = []
 			const warnings: string[] = []
-			if (this.notesStore.converters[this.slot || 0].bl32) {
+			if (this.thisConverter.bl32) {
 				;(notes as string[]).forEach((note, index) => {
 					if (note.length > 1) {
 						const numStart = note.search(/\d/)
@@ -227,11 +240,11 @@ export default {
 				return { errors, warnings }
 			}
 			this.warning = warnings
-			this.notesStore.converters[this.slot || 0].notes = notes as { duration: number; name: string; octave: number }[]
+			this.thisConverter.notes = notes as { duration: number; name: string; octave: number }[]
 			return { errors, warnings }
 		},
 		encodeBL32() {
-			this.notesStore.converters[this.slot || 0].bl32 = this.notesStore.converters[this.slot || 0].notes
+			this.thisConverter.bl32 = this.thisConverter.notes
 				.map(note => {
 					if (typeof note === "string") return note //should never happen
 					else {
@@ -254,7 +267,7 @@ export default {
 		transposeup() {
 			//transposing up by one part note
 			const possibleNotes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
-			this.notesStore.converters[this.slot || 0].notes.forEach((note, index) => {
+			this.thisConverter.notes.forEach((note, index) => {
 				if (typeof note === "string") return
 				if (note.name === "P") return
 				note.name = possibleNotes[(possibleNotes.indexOf(note.name) + 1) % 12]
@@ -265,7 +278,7 @@ export default {
 		},
 		transposedown() {
 			const possibleNotes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
-			this.notesStore.converters[this.slot || 0].notes.forEach((note, index) => {
+			this.thisConverter.notes.forEach((note, index) => {
 				if (typeof note === "string") return
 				if (note.name === "P") return
 				note.name = possibleNotes[(possibleNotes.indexOf(note.name) + 11) % 12]
@@ -279,9 +292,9 @@ export default {
 				if (amount > 0) this.transposeup()
 				else this.transposedown()
 			}
-			this.warning = this.generateNoteWarnings(this.notesStore.converters[this.slot || 0].notes)
+			this.warning = this.generateNoteWarnings(this.thisConverter.notes)
 			this.transposed += amount
-			if (this.notesStore.converters[this.slot || 0].notes.length === 0) this.transposed = 0
+			if (this.thisConverter.notes.length === 0) this.transposed = 0
 		},
 		generateNoteWarnings(notes: { duration: number; name: string; octave: number }[]): string[] {
 			const warnings: string[] = []
@@ -319,18 +332,39 @@ export default {
 			})
 			return warnings
 		},
+		speedUp() {
+			this.thisConverter.notes.forEach((note, index) => {
+				note.duration *= 2
+			})
+			this.encodeRTTTL()
+			this.encodeBL32()
+		},
+		slowDown() {
+			const insertNoteStack: { note: { duration: number; name: string; octave: number }; pos: number }[] = []
+
+			this.thisConverter.notes.forEach((note, index) => {
+				if (note.duration === 1) {
+					insertNoteStack.push({ note: { ...note }, pos: index })
+				} else note.duration /= 2
+			})
+			insertNoteStack.reverse().forEach(note => {
+				this.thisConverter.notes.splice(note.pos, 0, note.note)
+			})
+			this.encodeRTTTL()
+			this.encodeBL32()
+		},
 	},
 	computed: {
 		time(): string {
 			let time = 0
-			this.notesStore.converters[this.slot || 0].notes.forEach(note => {
+			this.thisConverter.notes.forEach(note => {
 				if (typeof note === "string") return
 				time += 1 / note.duration
 			})
 			return time.toFixed(2)
 		},
 		timeSec(): string {
-			return (60 / this.notesStore.converters[this.slot || 0].bpm) * 4 * parseFloat(this.time) + " sec"
+			return ((60 / this.thisConverter.calcBPM) * 4 * parseFloat(this.time)).toFixed(2) + " sec"
 		},
 		thisConverter() {
 			return this.notesStore.converters[this.slot || 0]
@@ -342,13 +376,15 @@ export default {
 		},
 		"thisConverter.updateFlag": function (flag: boolean) {
 			if (flag) {
-				this.notesStore.converters[this.slot || 0].updateFlag = false
+				this.thisConverter.updateFlag = false
 				this.updateBL32()
+				this.generateNoteWarnings(this.thisConverter.notes)
 			}
 		},
 		"thisConverter.bpm": function (bpm: number) {
 			if (bpm <= 0) bpm = 256
 			this.genLen = Math.round(3840 / bpm)
+			this.thisConverter.calcBPM = bpm
 		},
 	},
 }
@@ -388,8 +424,8 @@ p {
 	background-color: transparent;
 	border: 1px solid #eed;
 	display: inline-block;
-	padding: 2px;
-	width: 6rem;
+	padding: 2px 8px;
+	min-width: 3rem;
 	border-radius: 5px;
 	color: #eed;
 	font-size: 1rem;
