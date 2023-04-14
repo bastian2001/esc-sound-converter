@@ -22,26 +22,34 @@
 			<div class="transpose">
 				<h4>Transpose</h4>
 				<div class="transposeOnceButtons transposeButtons">
-					<button @click="transposeBy(1)">
-						<i class="fa-solid fa-arrow-up"></i>&nbsp;
+					<button @click="transposeBy(1)" title="Transpose up by 1/2 tone">
+						<i class="fa-solid fa-arrow-up"></i>
 						<p style="display: inline; font-family: inherit" v-if="transposed > 0">
-							{{ transposed }}
+							&nbsp; &nbsp;{{ transposed }}
 						</p></button
 					><br />
-					<button @click="transposeBy(-1)">
-						<i class="fa-solid fa-arrow-down"></i>&nbsp;
+					<button @click="transposeBy(-1)" title="Transpose down by 1/2 tone">
+						<i class="fa-solid fa-arrow-down"></i>
 						<p style="display: inline; font-family: inherit" v-if="transposed < 0">
 							{{ -transposed }}
 						</p>
 					</button>
 				</div>
 				<div class="transposeOctaveButtons transposeButtons">
-					<button @click="transposeBy(12)"><i class="fa-solid fa-arrow-up"></i>&nbsp;Octave</button><br />
-					<button @click="transposeBy(-12)"><i class="fa-solid fa-arrow-down"></i>&nbsp;Octave</button>
+					<button @click="transposeBy(12)" title="Transpose up by an octave">
+						<i class="fa-solid fa-arrow-up"></i>&nbsp;Octave</button
+					><br />
+					<button @click="transposeBy(-12)" title="Transpose down by an octave">
+						<i class="fa-solid fa-arrow-down"></i>&nbsp;Octave
+					</button>
 				</div>
 				<div class="transposeButtons speedButtons">
-					<button @click="slowDown" style="font-size: 1.5rem"><i class="fa-solid fa-person-walking"></i></button>&nbsp;
-					<button @click="speedUp" style="font-size: 1.5rem"><i class="fa-solid fa-rocket"></i></button>
+					<button @click="slowDown" style="font-size: 1.5rem" title="Double length of each note">
+						<i class="fa-solid fa-person-walking"></i></button
+					>&nbsp;
+					<button @click="speedUp" style="font-size: 1.5rem" title="Half length of each note">
+						<i class="fa-solid fa-rocket"></i>
+					</button>
 				</div>
 			</div>
 			<p class="time">
@@ -421,7 +429,7 @@ p {
 	margin-left: 1rem;
 }
 .transposeButtons button {
-	background-color: transparent;
+	background-color: #fff0;
 	border: 1px solid #eed;
 	display: inline-block;
 	padding: 2px 8px;
@@ -429,6 +437,11 @@ p {
 	border-radius: 5px;
 	color: #eed;
 	font-size: 1rem;
+	cursor: pointer;
+	transition: all 0.3s ease-out;
+}
+.transposeButtons button:hover {
+	background-color: #fff2;
 }
 .transposeButtons button:first-child {
 	margin-bottom: 5px;

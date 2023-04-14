@@ -148,6 +148,11 @@ p {
 	color: white;
 	text-align: right;
 	font-size: 1rem;
+	transition: all 0.3s ease-out;
+	cursor: pointer;
+}
+#intro button:hover {
+	background-color: #fff2;
 }
 .alignright {
 	text-align: right;

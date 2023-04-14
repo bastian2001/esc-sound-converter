@@ -14,24 +14,28 @@
 			</div>
 		</div>
 		&nbsp;
-		<button v-if="searchIn.includes(text)" @click="loadPreset">
+		<button v-if="searchIn.includes(text)" @click="loadPreset" title="Open Sound">
 			<i class="fa-regular fa-folder-open fa-fw"></i>
 		</button>
-		<button v-else style="color: #666">
+		<button v-else style="color: #666" title="Open Sound">
 			<i class="fa-regular fa-folder-open fa-fw"></i>
 		</button>
 		&nbsp;
-		<button v-if="text.length" @click="notesStore.addCustomPreset(text)">
+		<button v-if="text.length" @click="notesStore.addCustomPreset(text)" title="Save Sound">
 			<i class="fa-regular fa-floppy-disk fa-fw"></i>
 		</button>
-		<button v-else style="color: #666">
+		<button v-else style="color: #666" title="Save Sound">
 			<i class="fa-regular fa-floppy-disk fa-fw"></i>
 		</button>
 		&nbsp;
-		<button v-if="Object.keys(notesStore.customPresets).includes(text)" @click="notesStore.deletePreset(text)">
+		<button
+			v-if="Object.keys(notesStore.customPresets).includes(text)"
+			@click="notesStore.deletePreset(text)"
+			title="Delete Sound"
+		>
 			<i class="fa-solid fa-trash fa-fw"></i>
 		</button>
-		<button v-else style="color: #666">
+		<button v-else style="color: #666" title="Delete Sound">
 			<i class="fa-solid fa-trash fa-fw"></i>
 		</button>
 	</div>
@@ -187,11 +191,13 @@ input {
 
 button {
 	border: none;
+	border-radius: 10px;
 	background-color: transparent;
 	color: white;
 	font-size: 1.2rem;
 	padding: 0.5rem;
 	cursor: pointer;
+	transition: all 0.2s ease-out;
 }
 button:hover {
 	background-color: #fff3;
