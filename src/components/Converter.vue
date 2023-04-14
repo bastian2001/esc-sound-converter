@@ -461,4 +461,23 @@ p {
 	border-bottom: 1px solid #eed;
 	outline: none;
 }
+
+@media (max-width: 1024px) {
+	.converter {
+		grid-template-columns: 1fr 1fr;
+		margin-bottom: 5rem;
+	}
+	.info {
+		grid-column: span 2;
+	}
+}
+@media (max-width: 600px) {
+	.converter {
+		grid-template-columns: 1fr;
+		margin-bottom: 5rem;
+	}
+	.info {
+		grid-column: span 1;
+	}
+}
 </style>

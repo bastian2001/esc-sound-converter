@@ -195,4 +195,11 @@ button {
 button:hover {
 	background-color: #fff3;
 }
+@media (max-width: 1024px) {
+	#presetManager {
+		grid-column: auto;
+		grid-row: auto;
+		height: auto;
+	}
+}
 </style>

@@ -168,4 +168,13 @@ h2 {
 	margin-bottom: 2rem;
 	gap: 1rem;
 }
+
+@media (max-width: 1024px) {
+	.header {
+		grid-template-columns: 1fr;
+	}
+	.warningText {
+		grid-column: 1;
+	}
+}
 </style>
