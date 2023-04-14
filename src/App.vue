@@ -21,25 +21,29 @@
 					BlHeli_32 note lengths. It is likely that Bluejay supports a few more. If you find a source which ones work,
 					please tell me.
 				</p>
-				<div class="alignright"><button @click="hideIntro = true">Close</button></div>
+				<div class="alignright"><button @click="hideIntro = true">Got it!</button></div>
 			</div>
 		</div>
-		<div id="presetLoader"></div>
-		<h2>ESC Sound Converter</h2>
-		<p :class="{ hide: timeEqual }" class="warningText">
-			<i class="fa-solid fa-triangle-exclamation"></i>&nbsp;&nbsp;Unequal lengths lead to asynchronous beeps at the end
-			of the start sequence.
-		</p>
-		<Converter @time="$event => calcTime(0, $event)" :time-equal="timeEqual" />
-		<Converter @time="$event => calcTime(1, $event)" :time-equal="timeEqual" />
-		<Converter @time="$event => calcTime(2, $event)" :time-equal="timeEqual" />
-		<Converter @time="$event => calcTime(3, $event)" :time-equal="timeEqual" />
+		<div class="header">
+			<h2>ESC Sound Converter</h2>
+			<p :class="{ hide: timeEqual }" class="warningText">
+				<i class="fa-solid fa-triangle-exclamation"></i>&nbsp;&nbsp;Unequal lengths lead to asynchronous beeps at the
+				end of the start sequence.
+			</p>
+			<PresetManager />
+		</div>
+		<Converter @time="$event => calcTime(0, $event)" :time-equal="timeEqual" :slot="0" />
+		<Converter @time="$event => calcTime(1, $event)" :time-equal="timeEqual" :slot="1" />
+		<Converter @time="$event => calcTime(2, $event)" :time-equal="timeEqual" :slot="2" />
+		<Converter @time="$event => calcTime(3, $event)" :time-equal="timeEqual" :slot="3" />
 		<a href="https://github.com/Bastian2001/esc-sound-converter" id="githublink"><i class="fa-brands fa-github"></i></a>
 	</div>
 </template>
 
 <script lang="ts">
 import Converter from "@/components/Converter.vue"
+import { notesStore } from "./stores/notes"
+import PresetManager from "./components/PresetManager.vue"
 export default {
 	name: "App",
 	data() {
@@ -47,10 +51,15 @@ export default {
 			timeEqual: true,
 			times: ["0.00", "0.00", "0.00", "0.00"],
 			hideIntro: false,
+			notesStore: notesStore(),
 		}
 	},
 	components: {
 		Converter,
+		PresetManager,
+	},
+	mounted() {
+		this.notesStore.init()
 	},
 	methods: {
 		calcTime(index: number, time: string) {
@@ -137,10 +146,19 @@ p {
 	text-align: right;
 }
 .warningText {
-	margin-bottom: 2rem;
+	grid-column: 1;
+	margin-top: 0;
 }
 
-#presetLoader {
-	float: right;
+h2 {
+	margin-bottom: 0;
+}
+
+.header {
+	display: grid;
+	grid-template-columns: 1.5fr 1fr;
+	grid-template-rows: 1fr 1fr;
+	margin-bottom: 2rem;
+	gap: 1rem;
 }
 </style>

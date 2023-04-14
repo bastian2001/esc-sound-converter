@@ -1,18 +1,18 @@
 <template>
 	<div class="converter">
 		<div class="rtttlInput inputWrapper">
-			<p :class="{ active: rtttl.length || rtttlActive }">Bluejay</p>
+			<p :class="{ active: notesStore.converters[slot || 0].rtttl.length || rtttlActive }">Bluejay</p>
 			<textarea
-				v-model="rtttl"
+				v-model="notesStore.converters[slot || 0].rtttl"
 				@input="updateBL32"
 				@focusin="rtttlActive = true"
 				@focusout="rtttlActive = false"
 			></textarea>
 		</div>
 		<div class="bl32Input inputWrapper">
-			<p :class="{ active: bl32.length || bl32Active }">BLHeli32</p>
+			<p :class="{ active: notesStore.converters[slot || 0].bl32.length || bl32Active }">BLHeli32</p>
 			<textarea
-				v-model="bl32"
+				v-model="notesStore.converters[slot || 0].bl32"
 				@input="updateRTTTL"
 				@focusin="bl32Active = true"
 				@focusout="bl32Active = false"
@@ -48,35 +48,39 @@
 </template>
 
 <script lang="ts">
-// RTTTL (Bluejay) has a range from D#3 to D7
-// BlHeli32/BL32 has a range from C4 to B7
+//import notes store
+import { notesStore } from "@/stores/notes"
 
 export default {
 	name: "Converter",
 	props: {
 		timeEqual: Boolean,
+		slot: Number,
 	},
 	data() {
 		return {
-			rtttl: "",
-			bl32: "",
+			// rtttl: "",
+			// bl32: "",
 			error: [] as string[],
 			warning: [] as string[],
-			notes: [] as { duration: number; name: string; octave: number }[],
+			// notes: [] as { duration: number; name: string; octave: number }[],
 			rtttlActive: false,
 			bl32Active: false,
 			transposed: 0,
+			notesStore: notesStore(),
 		}
 	},
 	methods: {
 		decodeRTTTL(): { errors: string[]; warnings: string[] } {
 			const errors: string[] = []
 			const warnings: string[] = []
-			let notes: (string | { duration: number; name: string; octave: number })[] = this.rtttl
+			let notes: (string | { duration: number; name: string; octave: number })[] = this.notesStore.converters[
+				this.slot || 0
+			].rtttl
 				.replace(/\s/g, "")
 				.toLocaleUpperCase()
 				.split(":")
-			if (this.rtttl) {
+			if (this.notesStore.converters[this.slot || 0].rtttl) {
 				let defaultLength = -1,
 					defaultOctave = -1,
 					defaultBPM = -1
@@ -146,15 +150,18 @@ export default {
 				return { errors, warnings }
 			}
 			this.warning = warnings
-			this.notes = notes as { duration: number; name: string; octave: number }[]
+			this.notesStore.converters[this.slot || 0].notes = notes as { duration: number; name: string; octave: number }[]
 			return { errors, warnings }
 		},
 		encodeRTTTL() {
-			if (this.notes.length && this.notes[0].name) {
+			if (
+				this.notesStore.converters[this.slot || 0].notes.length &&
+				this.notesStore.converters[this.slot || 0].notes[0].name
+			) {
 				//this code is still executed because
-				this.rtttl =
+				this.notesStore.converters[this.slot || 0].rtttl =
 					"Melody:d=4,o=5,b=125:" +
-					this.notes
+					this.notesStore.converters[this.slot || 0].notes
 						.map(note => {
 							if (typeof note === "string") return note
 							else {
@@ -163,11 +170,13 @@ export default {
 							}
 						})
 						.join(",")
-			} else this.rtttl = ""
+			} else this.notesStore.converters[this.slot || 0].rtttl = ""
 		},
 		decodeBL32(): { errors: string[]; warnings: string[] } {
 			//insert space between notes for splitting. That is always between a number and a letter
-			const notes: (string | { duration: number; name: string; octave: number })[] = this.bl32
+			const notes: (string | { duration: number; name: string; octave: number })[] = this.notesStore.converters[
+				this.slot || 0
+			].bl32
 				.replace(/\s/g, "") //remove any whitespace
 				.replace(/(\d)([A-Z])/g, "$1 $2") //insert space between number and letter
 				.replace(/1\//g, "") //remove 1/ from note length
@@ -175,7 +184,7 @@ export default {
 				.split(" ")
 			const errors: string[] = []
 			const warnings: string[] = []
-			if (this.bl32) {
+			if (this.notesStore.converters[this.slot || 0].bl32) {
 				;(notes as string[]).forEach((note, index) => {
 					if (note.length > 1) {
 						const numStart = note.search(/\d/)
@@ -209,11 +218,11 @@ export default {
 				return { errors, warnings }
 			}
 			this.warning = warnings
-			this.notes = notes as { duration: number; name: string; octave: number }[]
+			this.notesStore.converters[this.slot || 0].notes = notes as { duration: number; name: string; octave: number }[]
 			return { errors, warnings }
 		},
 		encodeBL32() {
-			this.bl32 = this.notes
+			this.notesStore.converters[this.slot || 0].bl32 = this.notesStore.converters[this.slot || 0].notes
 				.map(note => {
 					if (typeof note === "string") return note //should never happen
 					else {
@@ -236,7 +245,7 @@ export default {
 		transposeup() {
 			//transposing up by one part note
 			const possibleNotes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
-			this.notes.forEach((note, index) => {
+			this.notesStore.converters[this.slot || 0].notes.forEach((note, index) => {
 				if (typeof note === "string") return
 				if (note.name === "P") return
 				note.name = possibleNotes[(possibleNotes.indexOf(note.name) + 1) % 12]
@@ -247,7 +256,7 @@ export default {
 		},
 		transposedown() {
 			const possibleNotes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
-			this.notes.forEach((note, index) => {
+			this.notesStore.converters[this.slot || 0].notes.forEach((note, index) => {
 				if (typeof note === "string") return
 				if (note.name === "P") return
 				note.name = possibleNotes[(possibleNotes.indexOf(note.name) + 11) % 12]
@@ -261,9 +270,9 @@ export default {
 				if (amount > 0) this.transposeup()
 				else this.transposedown()
 			}
-			this.warning = this.generateNoteWarnings(this.notes)
+			this.warning = this.generateNoteWarnings(this.notesStore.converters[this.slot || 0].notes)
 			this.transposed += amount
-			if (this.notes.length === 0) this.transposed = 0
+			if (this.notesStore.converters[this.slot || 0].notes.length === 0) this.transposed = 0
 		},
 		generateNoteWarnings(notes: { duration: number; name: string; octave: number }[]): string[] {
 			const warnings: string[] = []
@@ -271,8 +280,6 @@ export default {
 			notes.forEach(note => {
 				if (note.octave < 4 && note.name !== "P") {
 					if (!warnings.includes("Note too low for BlHeli32")) warnings.push("Note too low for BlHeli32")
-					console.log(note)
-					console.log(warnings)
 				}
 				if (note.octave > 7 && note.name !== "P")
 					if (!warnings.includes("Note too high for BlHeli32")) warnings.push("Note too high for BlHeli32")
@@ -307,16 +314,25 @@ export default {
 	computed: {
 		time(): string {
 			let time = 0
-			this.notes.forEach(note => {
+			this.notesStore.converters[this.slot || 0].notes.forEach(note => {
 				if (typeof note === "string") return
 				time += 1 / note.duration
 			})
 			return time.toFixed(2)
 		},
+		thisConverter() {
+			return this.notesStore.converters[this.slot || 0]
+		},
 	},
 	watch: {
 		time: function () {
 			this.$emit("time", this.time)
+		},
+		"thisConverter.updateFlag": function (flag: boolean) {
+			if (flag) {
+				this.notesStore.converters[this.slot || 0].updateFlag = false
+				this.updateBL32()
+			}
 		},
 	},
 }
