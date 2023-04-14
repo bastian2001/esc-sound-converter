@@ -71,12 +71,12 @@ export const notesStore = defineStore({
 		loadPreset(preset: string) {
 			if (this.generalPresets[preset]) {
 				this.generalPresets[preset].channels.forEach((channel: string, index: number) => {
-					this.converters[index].rtttl = channel
+					this.converters[index].rtttl = channel || ""
 					this.converters[index].updateFlag = true
 				})
 			} else if (this.customPresets[preset]) {
 				this.customPresets[preset].channels.forEach((channel: string, index: number) => {
-					this.converters[index].rtttl = channel
+					this.converters[index].rtttl = channel || ""
 					this.converters[index].updateFlag = true
 				})
 			}

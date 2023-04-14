@@ -1,7 +1,7 @@
 <template>
 	<div class="main-wrapper">
-		<div id="introBackground" :class="{ hide: hideIntro }">
-			<div id="intro">
+		<div id="introBackground" :class="{ hide: hideIntro }" @click="hideIntro = true">
+			<div id="intro" @click="$event.stopPropagation()">
 				<h2>ESC Sound Converter</h2>
 				<p class="introText">
 					This is a tool to convert BlHeli32 and Bluejay startup sounds between each other.<br />Use the Transpose
@@ -102,7 +102,7 @@ p {
 }
 
 #introBackground {
-	background-color: #000d;
+	background-color: #000a;
 	position: fixed;
 	top: 0;
 	left: 0;
@@ -125,12 +125,19 @@ p {
 	background-color: #111118;
 	padding: 4rem;
 	border-radius: 3rem;
-	width: 70%;
+	width: 90%;
+	max-width: 1500px;
+	max-height: 90%;
 	box-sizing: border-box;
+	overflow-y: auto;
+}
+#intro h2 {
+	color: white;
 }
 
 .introText {
 	line-height: 150%;
+	color: white;
 }
 #intro button {
 	padding: 0.5rem 1rem;

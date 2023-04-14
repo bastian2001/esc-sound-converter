@@ -90,8 +90,8 @@ export default {
 	},
 	computed: {
 		searchIn(): string[] {
-			const x = Object.keys(this.notesStore.generalPresets)
-			x.push(...Object.keys(this.notesStore.customPresets))
+			const x = Object.keys(this.notesStore.customPresets)
+			x.push(...Object.keys(this.notesStore.generalPresets))
 			return x
 		},
 		search(): string[] {
