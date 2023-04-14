@@ -28,7 +28,7 @@
 			<i class="fa-regular fa-floppy-disk fa-fw"></i>
 		</button>
 		&nbsp;
-		<button v-if="Object.keys(notesStore.customPresets).includes(text)">
+		<button v-if="Object.keys(notesStore.customPresets).includes(text)" @click="notesStore.deletePreset(text)">
 			<i class="fa-solid fa-trash fa-fw"></i>
 		</button>
 		<button v-else style="color: #666">

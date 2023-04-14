@@ -81,5 +81,12 @@ export const notesStore = defineStore({
 				})
 			}
 		},
+		deletePreset(preset: string) {
+			if (this.generalPresets[preset]) return alert("Cannot delete a general preset")
+			if (this.customPresets[preset]) {
+				delete this.customPresets[preset]
+				localStorage.setItem("customPresets", JSON.stringify(this.customPresets))
+			}
+		},
 	},
 })
