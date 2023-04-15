@@ -2,42 +2,42 @@
 	"Nokia Tune": {
 		"comment": "This is made as a separate object for eventual future use",
 		"channels": [
-			"Melody:d=4,o=5,b=160:8e6,8d6,4f#5,4g#5,8c#6,8b5,4d5,4e5,8b5,8a5,4c#5,4e5,1a5",
-			"Melody:d=4,o=5,b=160:8e6,8d6,4f#5,4g#5,8c#6,8b5,4d5,4e5,8b5,8a5,4c#5,4e5,1a5",
-			"Melody:d=4,o=5,b=160:4p,2d5,4p,2g#4,4p,2a4,1a4",
-			"Melody:d=4,o=5,b=160:4p,2a5,4p,2b4,4p,2c#5,1c#5"
+			"NokiaTune:d=4,o=5,b=160:8e6,8d6,4f#5,4g#5,8c#6,8b5,4d5,4e5,8b5,8a5,4c#5,4e5,1a5",
+			"NokiaTune:d=4,o=5,b=160:8e6,8d6,4f#5,4g#5,8c#6,8b5,4d5,4e5,8b5,8a5,4c#5,4e5,1a5",
+			"NokiaTune:d=4,o=5,b=160:4p,2d5,4p,2g#4,4p,2a4,1a4",
+			"NokiaTune:d=4,o=5,b=160:4p,2a5,4p,2b4,4p,2c#5,1c#5"
 		]
 	},
 	"Mario Kart DS: Grand Prix Start": {
 		"channels": [
-			"Melody:b=570,o=4,d=32:2g3,2a3,4p,2c,4p,2e,4f#,4p,4f#,1g#,1p,1a5,2a5,1p,2p,1a5,2a5,1p,2p,1a5,2a5,1p,2p,1a6,2a6,1p,2p",
-			"Melody:b=570,o=4,d=32:2e3,2f#3,4p,2g3,4p,2c,4d,4p,4d,1e,1p,1a5,2a5,1p,2p,1a5,2a5,1p,2p,1a5,2a5,1p,2p,1a5,2a5,1p,2p",
-			"Melody:b=570,o=4,d=32:2g3,2a3,4p,2c,4p,2e,4f#,4p,4f#,1g#,1p,1a5,2a5,1p,2p,1a5,2a5,1p,2p,1a5,2a5,1p,2p,1a6,2a6,1p,2p",
-			"Melody:b=570,o=4,d=32:2g3,2a3,4p,2c,4p,2e,4d,4p,4d,1e,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p"
+			"MKDSGPStart:b=570,o=4,d=32:2g3,2a3,4p,2c,4p,2e,4f#,4p,4f#,1g#,1p,1a5,2a5,1p,2p,1a5,2a5,1p,2p,1a5,2a5,1p,2p,1a6,2a6,1p,2p",
+			"MKDSGPStart:b=570,o=4,d=32:2e3,2f#3,4p,2g3,4p,2c,4d,4p,4d,1e,1p,1a5,2a5,1p,2p,1a5,2a5,1p,2p,1a5,2a5,1p,2p,1a5,2a5,1p,2p",
+			"MKDSGPStart:b=570,o=4,d=32:2g3,2a3,4p,2c,4p,2e,4f#,4p,4f#,1g#,1p,1a5,2a5,1p,2p,1a5,2a5,1p,2p,1a5,2a5,1p,2p,1a6,2a6,1p,2p",
+			"MKDSGPStart:b=570,o=4,d=32:2g3,2a3,4p,2c,4p,2e,4d,4p,4d,1e,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p"
 		]
 	},
 	"Mario Kart: Baby Park (looong)": {
 		"channels": [
-			"Melody:d=4,o=5,b=250:8p,8c5,8p,8c5,8f5,8c5,8a4,8f4,4c5,4a4,4c5,4a4,8p,8c5,8p,8c5,8f5,8c5,8a4,8f4,4c5,4a#4,4a4,4g4,8a4,8f4,8a4,8c5,8a#4,8f4,8a#4,8d5,4c5,4e5,4f5,4c5,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p",
-			"Melody:d=4,o=5,b=250:1p,1p,1p,1p,1p,1p,8p,8a#4,8p,8a4,8a#4,8a4,8g4,8f4,4e4,4f4,4g4,4c4,8p,8c5,8p,8c5,8f5,8c5,8a4,8f4,4c5,4a4,4c5,4a4,8p,8c5,8p,8c5,8f5,8c5,8a4,8f4,4c5,4a#4,4a4,4g4,1p,1p,1p,1p,1p,1p",
-			"Melody:d=4,o=5,b=250:1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,8a4,8f4,8a4,8c5,8a#4,8f4,8a#4,8d5,4c5,4e5,4f5,4c5,8p,8d5,8p,8d5,8c5,8c5,8d5,8e5,4f5,4c5,2f5,8p,8c#5,8p,8c#5,8f#5,8c#5,8a#4,8f#4,4c#5,4a#4,4c#5,4a#4",
-			"Melody:d=4,o=5,b=250:1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p"
+			"MKBabyPark:d=4,o=5,b=250:8p,8c5,8p,8c5,8f5,8c5,8a4,8f4,4c5,4a4,4c5,4a4,8p,8c5,8p,8c5,8f5,8c5,8a4,8f4,4c5,4a#4,4a4,4g4,8a4,8f4,8a4,8c5,8a#4,8f4,8a#4,8d5,4c5,4e5,4f5,4c5,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p",
+			"MKBabyPark:d=4,o=5,b=250:1p,1p,1p,1p,1p,1p,8p,8a#4,8p,8a4,8a#4,8a4,8g4,8f4,4e4,4f4,4g4,4c4,8p,8c5,8p,8c5,8f5,8c5,8a4,8f4,4c5,4a4,4c5,4a4,8p,8c5,8p,8c5,8f5,8c5,8a4,8f4,4c5,4a#4,4a4,4g4,1p,1p,1p,1p,1p,1p",
+			"MKBabyPark:d=4,o=5,b=250:1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,8a4,8f4,8a4,8c5,8a#4,8f4,8a#4,8d5,4c5,4e5,4f5,4c5,8p,8d5,8p,8d5,8c5,8c5,8d5,8e5,4f5,4c5,2f5,8p,8c#5,8p,8c#5,8f#5,8c#5,8a#4,8f#4,4c#5,4a#4,4c#5,4a#4",
+			"MKBabyPark:d=4,o=5,b=250:1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p,1p"
 		]
 	},
 	"F1 Theme short": {
 		"channels": [
-			"Melody:d=4,o=5,b=220:2d5,4d5,8e5,8f5,2d5,2c5,2c5,2a4,2b4",
-			"Melody:d=4,o=5,b=220:2d5,4d5,8e5,8f5,2d5,2c5,2c5,2a4,2b4",
-			"Melody:d=4,o=5,b=220:2d4,2d4,2a#4,4a#4,4f4,2f4,4f4,4c4,2g4",
-			"Melody:d=4,o=5,b=220:2d4,2d4,2a#4,4a#4,4f4,2f4,4f4,4c4,2g4"
+			"F1Theme:d=4,o=5,b=220:2d5,4d5,8e5,8f5,2d5,2c5,2c5,2a4,2b4",
+			"F1Theme:d=4,o=5,b=220:2d5,4d5,8e5,8f5,2d5,2c5,2c5,2a4,2b4",
+			"F1Theme:d=4,o=5,b=220:2d4,2d4,2a#4,4a#4,4f4,2f4,4f4,4c4,2g4",
+			"F1Theme:d=4,o=5,b=220:2d4,2d4,2a#4,4a#4,4f4,2f4,4f4,4c4,2g4"
 		]
 	},
 	"F1 Theme long": {
 		"channels": [
-			"Melody:d=4,o=5,b=220:2d5,4d5,8e5,8f5,2d5,2c5,2c5,2a4,1b4,2d5,4d5,8e5,8f5,2d5,2c5,2c5,2f5,1g5",
-			"Melody:d=4,o=5,b=220:2d5,4d5,8e5,8f5,2d5,2c5,2c5,2a4,1b4,2d5,4d5,8e5,8f5,2d5,2c5,2c5,2f5,1g5",
-			"Melody:d=4,o=5,b=220:2d4,2d4,2a#4,4a#4,4f4,2f4,4f4,4c4,2g4,2g4,2d4,2d4,2a#4,4a#4,4f4,2f4,4f4,4c4,1c5",
-			"Melody:d=4,o=5,b=220:2d4,2d4,2a#4,4a#4,4f4,2f4,4f4,4c4,2g4,2g4,2d4,2d4,2a#4,4a#4,4f4,2f4,4f4,4c4,1c5"
+			"F1Theme:d=4,o=5,b=220:2d5,4d5,8e5,8f5,2d5,2c5,2c5,2a4,1b4,2d5,4d5,8e5,8f5,2d5,2c5,2c5,2f5,1g5",
+			"F1Theme:d=4,o=5,b=220:2d5,4d5,8e5,8f5,2d5,2c5,2c5,2a4,1b4,2d5,4d5,8e5,8f5,2d5,2c5,2c5,2f5,1g5",
+			"F1Theme:d=4,o=5,b=220:2d4,2d4,2a#4,4a#4,4f4,2f4,4f4,4c4,2g4,2g4,2d4,2d4,2a#4,4a#4,4f4,2f4,4f4,4c4,1c5",
+			"F1Theme:d=4,o=5,b=220:2d4,2d4,2a#4,4a#4,4f4,2f4,4f4,4c4,2g4,2g4,2d4,2d4,2a#4,4a#4,4f4,2f4,4f4,4c4,1c5"
 		]
 	}
 }
