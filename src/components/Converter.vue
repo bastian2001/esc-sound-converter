@@ -24,15 +24,11 @@
 				<div class="transposeOnceButtons transposeButtons">
 					<button @click="transposeBy(1)" title="Transpose up by 1/2 tone">
 						<i class="fa-solid fa-arrow-up"></i>
-						<p style="display: inline; font-family: inherit" v-if="transposed > 0">
-							&nbsp; &nbsp;{{ transposed }}
-						</p></button
+						<p style="display: inline; font-family: inherit" v-if="transposed > 0">&nbsp;{{ transposed }}</p></button
 					><br />
 					<button @click="transposeBy(-1)" title="Transpose down by 1/2 tone">
 						<i class="fa-solid fa-arrow-down"></i>
-						<p style="display: inline; font-family: inherit" v-if="transposed < 0">
-							{{ -transposed }}
-						</p>
+						<p style="display: inline; font-family: inherit" v-if="transposed < 0">&nbsp;{{ -transposed }}</p>
 					</button>
 				</div>
 				<div class="transposeOctaveButtons transposeButtons">

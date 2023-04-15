@@ -4,22 +4,18 @@
 			<div id="intro" @click="$event.stopPropagation()">
 				<h2>ESC Sound Converter</h2>
 				<p class="introText">
-					This is a tool to convert BlHeli32 and Bluejay startup sounds between each other.<br />Use the Transpose
+					This is a tool to convert BlHeli_32 and Bluejay startup sounds between each other.<br />Use the Transpose
 					buttons if your sounds are too high or too low for your system. BlHeli32 allows you to go higher, while
 					Bluejay goes lower.<br />If you find any bugs or have any suggestions, please open an issue on
 					<a href="https://github.com/Bastian2001/esc-sound-converter/issues/new" style="color: inherit !important"
 						>Github</a
 					>.<br /><br />
-					Three important things to note:<br />
+					Two important things to note:<br />
 					1. When you convert a Bluejay sound to BlHeli_32, always set the "Gen. Interval" to 0. Otherwise there will be
-					a pause between each note. Other values make it impossible to know the actual length and it sounds straightup
-					bad most of the time (because with different sounds, the ESC sounds fall out of sync from each other).
-					Increase "Gen. Length" to make it slower or decrease it to make it faster.<br />
-					2. When you convert a BlHeli_32 sound to Bluejay, use the "b=xxx" value to speed things up. The higher the
-					value, the faster the sound.<br />
-					3. I am not sure which note lengths exactly work with Bluejay. Therefore, there are only warnings for
-					BlHeli_32 note lengths. It is likely that Bluejay supports a few more. If you find a source which ones work,
-					please tell me.
+					a pause between each note. Other values only make sense if all ESCs are following the exact same rhythm.<br />
+					2. I am not sure which note lengths exactly work with Bluejay. Therefore, there are only warnings for
+					BlHeli_32 note lengths. It is likely that Bluejay supports a few more than BlHeli_32. If you find a source
+					which ones work, please tell me.
 				</p>
 				<div class="alignright"><button @click="hideIntro = true">Got it!</button></div>
 			</div>
@@ -44,6 +40,7 @@
 import Converter from "@/components/Converter.vue"
 import { notesStore } from "./stores/notes"
 import PresetManager from "./components/PresetManager.vue"
+import mixpanel from "mixpanel-browser"
 export default {
 	name: "App",
 	data() {
@@ -60,6 +57,19 @@ export default {
 	},
 	mounted() {
 		this.notesStore.init()
+
+		// Replace YOUR_TOKEN with your Project Token
+		mixpanel.init("46d77b7db9fde5f907ed589c9eb66537", { debug: true, ignore_dnt: true })
+
+		// Set this to a unique identifier for the user performing the event.
+		// eg: their ID in your database or their email address.
+		mixpanel.identify("someone")
+
+		// Track an event. It can be anything, but in this example, we're tracking a Signed Up event.
+		// Include a property about the signup, like the Signup Type
+		mixpanel.track("Opened website", {
+			Component: "App.vue",
+		})
 	},
 	methods: {
 		calcTime(index: number, time: string) {
