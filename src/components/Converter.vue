@@ -122,7 +122,7 @@ export default {
 						warnings.push("Invalid RTTTL options, defaults will be auto-generated")
 					defaultLength = 4
 					defaultOctave = 5
-					defaultBPM = 125
+					defaultBPM = 256
 				} else {
 					const options = (notes as string[])[1].split(",")
 					options.forEach(option => {
@@ -334,29 +334,27 @@ export default {
 
 				if (note.name === "P") {
 					const pauseDurations = [1, 2, 4, 8, 16, 32, 64, 128]
-					if (!pauseDurations.includes(note.duration))
+					if (!pauseDurations.includes(note.duration)) {
 						if (!warnings.includes("Keep pause lengths to 1/1, 1/2, 1/4, ... 1/128 for BlHeli32"))
 							warnings.push("Keep pause lengths to 1/1, 1/2, 1/4, ... 1/128 for BlHeli32")
-					for (let i = 0; i < (note.syncopation || 0); i++) {
-						if (!pauseDurations.includes(note.duration * 2 ** (i + 1)))
-							if (
-								!warnings.includes("Keep pause lengths to 1/1, 1/2, 1/4, ... 1/128 for BlHeli32. Watch your syncopes.")
-							)
-								warnings.push("Keep pause lengths to 1/1, 1/2, 1/4, ... 1/128 for BlHeli32. Watch your syncopes.")
-					}
+					} else
+						for (let i = 0; i < (note.syncopation || 0); i++) {
+							if (!pauseDurations.includes(note.duration * 2 ** (i + 1)))
+								if (!warnings.includes("Because of syncopes, a pause too quick for BlHeli32 was created. Min 1/128."))
+									warnings.push("Because of syncopes, a pause too quick for BlHeli32 was created. Min 1/128.")
+						}
 				}
 				if (note.name !== "P" && note.name) {
 					const noteDurations = [1, 2, 4, 8]
-					if (!noteDurations.includes(note.duration))
+					if (!noteDurations.includes(note.duration)) {
 						if (!warnings.includes("BlHeli32 only supports 1/1, 1/2, 1/4, and 1/8 note lengths"))
 							warnings.push("BlHeli32 only supports 1/1, 1/2, 1/4, and 1/8 note lengths")
-					for (let i = 0; i < (note.syncopation || 0); i++) {
-						if (!noteDurations.includes(note.duration * 2 ** (i + 1)))
-							if (
-								!warnings.includes("BlHeli32 only supports 1/1, 1/2, 1/4, and 1/8 note lengths. Watch your syncopes.")
-							)
-								warnings.push("BlHeli32 only supports 1/1, 1/2, 1/4, and 1/8 note lengths. Watch your syncopes.")
-					}
+					} else
+						for (let i = 0; i < (note.syncopation || 0); i++) {
+							if (!noteDurations.includes(note.duration * 2 ** (i + 1)))
+								if (!warnings.includes("Because of syncopes, a note too quick for BlHeli32 was created. Min. 1/8."))
+									warnings.push("Because of syncopes, a note too quick for BlHeli32 was created. Min. 1/8.")
+						}
 				}
 			})
 			return warnings
