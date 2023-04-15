@@ -139,6 +139,7 @@ export default {
 					}
 				}
 				this.thisConverter.bpm = defaultBPM
+				this.thisConverter.calcBPM = defaultBPM
 				notes = (notes as string[])[notes.length - 1].split(",")
 				;(notes as string[]).forEach((note, index) => {
 					const firstLetter = note.search(/[a-zA-Z]/)
