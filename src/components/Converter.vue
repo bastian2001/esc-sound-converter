@@ -78,6 +78,13 @@
 import { notesStore } from "@/stores/notes"
 import { parse } from "@vue/compiler-dom"
 
+type Note = {
+	octave: number
+	name: string
+	duration: number
+	syncopation?: number
+}
+
 export default {
 	name: "Converter",
 	props: {
@@ -90,7 +97,7 @@ export default {
 			// bl32: "",
 			error: [] as string[],
 			warning: [] as string[],
-			// notes: [] as { duration: number; name: string; octave: number }[],
+			// notes: [] as Note[],
 			rtttlActive: false,
 			bl32Active: false,
 			transposed: 0,
@@ -102,9 +109,7 @@ export default {
 		decodeRTTTL(): { errors: string[]; warnings: string[] } {
 			const errors: string[] = []
 			const warnings: string[] = []
-			let notes: (string | { duration: number; name: string; octave: number })[] = this.notesStore.converters[
-				this.slot || 0
-			].rtttl
+			let notes: (string | Note)[] = this.notesStore.converters[this.slot || 0].rtttl
 				.replace(/\s/g, "")
 				.toLocaleUpperCase()
 				.split(":")
@@ -145,10 +150,12 @@ export default {
 					const firstLetter = note.search(/[a-zA-Z]/)
 					//note length starting at first digit after a letter or hashtag
 					let octaveStartingAt = note.search(/(?<=[A-Z#])\d/)
+					let syncopes = 0
 					if (octaveStartingAt === -1) octaveStartingAt = note.length
 					if (note.includes(".")) {
-						if (!warnings.includes("Syncopes are not supported in BlHeli32"))
-							warnings.push("Syncopes are not supported in BlHeli32")
+						// if (!warnings.includes("Syncopes are not supported in BlHeli32"))
+						// 	warnings.push("Syncopes are not supported in BlHeli32")
+						syncopes = note.length - note.replace(/\./g, "").length
 						note = note.replace(/\./g, "")
 					}
 					const noteName = note.substring(firstLetter, octaveStartingAt)
@@ -167,12 +174,13 @@ export default {
 							duration: noteLength,
 							name: noteName,
 							octave: noteOctave,
+							syncopation: syncopes,
 						}
 					} else if (note) {
 						if (!errors.includes("incomplete note")) errors.push("incomplete note")
 					}
 				})
-				warnings.push(...this.generateNoteWarnings(notes as { duration: number; name: string; octave: number }[]))
+				warnings.push(...this.generateNoteWarnings(notes as Note[]))
 			} else this.transposed = 0
 			this.error = errors
 			this.warning = []
@@ -180,7 +188,7 @@ export default {
 				return { errors, warnings }
 			}
 			this.warning = warnings
-			this.thisConverter.notes = notes as { duration: number; name: string; octave: number }[]
+			this.thisConverter.notes = notes as Note[]
 			return { errors, warnings }
 		},
 		encodeRTTTL() {
@@ -192,8 +200,10 @@ export default {
 						.map(note => {
 							if (typeof note === "string") return note
 							else {
-								if (note.name === "P") return `${note.duration}p`
-								else return `${note.duration}${note.name.toLocaleLowerCase()}${note.octave}`
+								let syncopes = ""
+								for (let i = 0; i < (note.syncopation || 0); i++) syncopes += "."
+								if (note.name === "P") return `${note.duration}p${syncopes}`
+								else return `${note.duration}${note.name.toLocaleLowerCase()}${note.octave}${syncopes}`
 							}
 						})
 						.join(",")
@@ -201,9 +211,7 @@ export default {
 		},
 		decodeBL32(): { errors: string[]; warnings: string[] } {
 			//insert space between notes for splitting. That is always between a number and a letter
-			const notes: (string | { duration: number; name: string; octave: number })[] = this.notesStore.converters[
-				this.slot || 0
-			].bl32
+			const notes: (string | Note)[] = this.notesStore.converters[this.slot || 0].bl32
 				.replace(/\s/g, "") //remove any whitespace
 				.replace(/(\d)([A-Z])/g, "$1 $2") //insert space between number and letter
 				.replace(/1\//g, "") //remove 1/ from note length
@@ -237,7 +245,7 @@ export default {
 						if (!errors.includes("incomplete note")) errors.push("incomplete note")
 					}
 				})
-				warnings.push(...this.generateNoteWarnings(notes as { duration: number; name: string; octave: number }[]))
+				warnings.push(...this.generateNoteWarnings(notes as Note[]))
 			} else this.transposed = 0
 			this.error = errors
 			this.warning = []
@@ -245,7 +253,7 @@ export default {
 				return { errors, warnings }
 			}
 			this.warning = warnings
-			this.thisConverter.notes = notes as { duration: number; name: string; octave: number }[]
+			this.thisConverter.notes = notes as Note[]
 			return { errors, warnings }
 		},
 		encodeBL32() {
@@ -253,8 +261,16 @@ export default {
 				.map(note => {
 					if (typeof note === "string") return note //should never happen
 					else {
-						if (note.name === "P") return `P${note.duration}`
-						else return `${note.name}${note.octave} ${note.duration}`
+						let noteString = ""
+						for (let i = 0; i <= (note.syncopation || 0); i++) {
+							if (note.name === "P")
+								noteString += `P ${note.duration * 2 ** i}${i === (note.syncopation || 0) ? "" : " "}`
+							else
+								noteString += `${note.name}${note.octave} ${note.duration * 2 ** i}${
+									i === (note.syncopation || 0) ? "" : " "
+								}`
+						}
+						return noteString
 					}
 				})
 				.join(" ")
@@ -301,7 +317,7 @@ export default {
 			this.transposed += amount
 			if (this.thisConverter.notes.length === 0) this.transposed = 0
 		},
-		generateNoteWarnings(notes: { duration: number; name: string; octave: number }[]): string[] {
+		generateNoteWarnings(notes: Note[]): string[] {
 			const warnings: string[] = []
 			const possibleNotes = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"]
 			notes.forEach(note => {
@@ -317,23 +333,31 @@ export default {
 					if (!warnings.includes("Note too high for Bluejay")) warnings.push("Note too high for Bluejay")
 
 				if (note.name === "P") {
-					if (
-						note.duration !== 1 &&
-						note.duration !== 2 &&
-						note.duration !== 4 &&
-						note.duration !== 8 &&
-						note.duration !== 16 &&
-						note.duration !== 32 &&
-						note.duration !== 64 &&
-						note.duration !== 128
-					)
+					const pauseDurations = [1, 2, 4, 8, 16, 32, 64, 128]
+					if (!pauseDurations.includes(note.duration))
 						if (!warnings.includes("Keep pause lengths to 1/1, 1/2, 1/4, ... 1/128 for BlHeli32"))
 							warnings.push("Keep pause lengths to 1/1, 1/2, 1/4, ... 1/128 for BlHeli32")
+					for (let i = 0; i < (note.syncopation || 0); i++) {
+						if (!pauseDurations.includes(note.duration * 2 ** (i + 1)))
+							if (
+								!warnings.includes("Keep pause lengths to 1/1, 1/2, 1/4, ... 1/128 for BlHeli32. Watch your syncopes.")
+							)
+								warnings.push("Keep pause lengths to 1/1, 1/2, 1/4, ... 1/128 for BlHeli32. Watch your syncopes.")
+					}
 				}
-				if (note.name !== "P" && note.name)
-					if (note.duration !== 1 && note.duration !== 2 && note.duration !== 4 && note.duration !== 8)
+				if (note.name !== "P" && note.name) {
+					const noteDurations = [1, 2, 4, 8]
+					if (!noteDurations.includes(note.duration))
 						if (!warnings.includes("BlHeli32 only supports 1/1, 1/2, 1/4, and 1/8 note lengths"))
 							warnings.push("BlHeli32 only supports 1/1, 1/2, 1/4, and 1/8 note lengths")
+					for (let i = 0; i < (note.syncopation || 0); i++) {
+						if (!noteDurations.includes(note.duration * 2 ** (i + 1)))
+							if (
+								!warnings.includes("BlHeli32 only supports 1/1, 1/2, 1/4, and 1/8 note lengths. Watch your syncopes.")
+							)
+								warnings.push("BlHeli32 only supports 1/1, 1/2, 1/4, and 1/8 note lengths. Watch your syncopes.")
+					}
+				}
 			})
 			return warnings
 		},
@@ -345,7 +369,7 @@ export default {
 			this.encodeBL32()
 		},
 		slowDown() {
-			const insertNoteStack: { note: { duration: number; name: string; octave: number }; pos: number }[] = []
+			const insertNoteStack: { note: Note; pos: number }[] = []
 
 			this.thisConverter.notes.forEach((note, index) => {
 				if (note.duration === 1) {
@@ -364,7 +388,7 @@ export default {
 			let time = 0
 			this.thisConverter.notes.forEach(note => {
 				if (typeof note === "string") return
-				time += 1 / note.duration
+				for (let i = 0; i <= (note.syncopation || 0); i++) time += 1 / (note.duration * 2 ** i)
 			})
 			return time.toFixed(2)
 		},

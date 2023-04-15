@@ -5,6 +5,7 @@ type Note = {
 	octave: number
 	name: string
 	duration: number
+	syncopation?: number
 }
 
 export const notesStore = defineStore({
