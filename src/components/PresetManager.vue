@@ -1,7 +1,13 @@
 <template>
 	<div id="presetManager">
 		<div id="searcher" @focusin="focus(true)" @focusout="focus(false)">
-			<input type="text" v-model="text" id="presetSearch" placeholder="🔍 Preset Name" @keyup="keyPressed($event)" />
+			<input
+				type="text"
+				v-model="text"
+				id="presetSearch"
+				:placeholder="nameSuggestion || '🔍 Preset Name'"
+				@keyup="keyPressed($event)"
+			/>
 			<div class="suggestions" v-if="focused && search.length">
 				<div
 					class="searchResult"
@@ -21,7 +27,7 @@
 			<i class="fa-regular fa-folder-open fa-fw"></i>
 		</button>
 		&nbsp;
-		<button v-if="text.length" @click="notesStore.addCustomPreset(text)" title="Save Sound">
+		<button v-if="text.length || nameSuggestion.length" @click="savePreset" title="Save Sound">
 			<i class="fa-regular fa-floppy-disk fa-fw"></i>
 		</button>
 		<button v-else style="color: #666" title="Save Sound">
@@ -53,12 +59,18 @@ export default {
 		}
 	},
 	methods: {
+		savePreset() {
+			this.notesStore.addCustomPreset(this.text || this.nameSuggestion)
+			if (this.text === "" && this.nameSuggestion) this.text = this.nameSuggestion
+		},
 		loadPreset() {
 			this.notesStore.loadPreset(this.text)
 		},
 		focus(inout: boolean) {
-			if (inout) this.focused = true
-			else setTimeout(() => (this.focused = false), 150)
+			if (inout) {
+				this.focused = true
+				if (this.text === "" && this.nameSuggestion) this.text = this.nameSuggestion
+			} else setTimeout(() => (this.focused = false), 150)
 		},
 		keyPressed(event: any) {
 			switch (event.keyCode) {
@@ -138,6 +150,17 @@ export default {
 			let s = [] as string[]
 			this.searchIn.forEach(el => s.push(el.toLocaleLowerCase()))
 			return s
+		},
+		nameSuggestion(): string {
+			let str = this.notesStore.converters[0].name
+				.replace(/([a-z])([A-Z])/g, "$1 $2")
+				.replace(/([a-z])(\d)/g, "$1 $2")
+				.replace(/([\d])([A-Za-z])/g, "$1 $2")
+			if (str === "Melody") return ""
+			return str
+		},
+		useSuggestion(): boolean {
+			return this.nameSuggestion !== "" && this.text === ""
 		},
 	},
 }

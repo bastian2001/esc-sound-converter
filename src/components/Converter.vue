@@ -109,10 +109,7 @@ export default {
 		decodeRTTTL(): { errors: string[]; warnings: string[] } {
 			const errors: string[] = []
 			const warnings: string[] = []
-			let notes: (string | Note)[] = this.notesStore.converters[this.slot || 0].rtttl
-				.replace(/\s/g, "")
-				.toLocaleUpperCase()
-				.split(":")
+			let notes: (string | Note)[] = this.thisConverter.rtttl.replace(/\s/g, "").toLocaleUpperCase().split(":")
 			if (this.thisConverter.rtttl) {
 				let defaultLength = -1,
 					defaultOctave = -1,
@@ -124,6 +121,7 @@ export default {
 					defaultOctave = 5
 					defaultBPM = 256
 				} else {
+					this.thisConverter.name = this.thisConverter.rtttl.replace(/\s/g, "").split(":")[0]
 					const options = (notes as string[])[1].split(",")
 					options.forEach(option => {
 						const optionName = option.substring(0, option.search("="))
@@ -193,9 +191,8 @@ export default {
 		},
 		encodeRTTTL() {
 			if (this.thisConverter.notes.length && this.thisConverter.notes[0].name) {
-				//this code is still executed because
 				this.thisConverter.rtttl =
-					`Melody:d=4,o=5,b=${Math.round(3840 / (this.genLen || 256))}:` +
+					`${this.thisConverter.name || "Melody"}:d=4,o=5,b=${Math.round(3840 / (this.genLen || 256))}:` +
 					this.thisConverter.notes
 						.map(note => {
 							if (typeof note === "string") return note

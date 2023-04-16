@@ -19,6 +19,7 @@ export const notesStore = defineStore({
 				updateFlag: false,
 				bpm: 256,
 				calcBPM: 256,
+				name: "",
 			},
 			{
 				notes: [] as Note[],
@@ -27,6 +28,7 @@ export const notesStore = defineStore({
 				updateFlag: false,
 				bpm: 256,
 				calcBPM: 256,
+				name: "",
 			},
 			{
 				notes: [] as Note[],
@@ -35,6 +37,7 @@ export const notesStore = defineStore({
 				updateFlag: false,
 				bpm: 256,
 				calcBPM: 256,
+				name: "",
 			},
 			{
 				notes: [] as Note[],
@@ -43,6 +46,7 @@ export const notesStore = defineStore({
 				updateFlag: false,
 				bpm: 256,
 				calcBPM: 256,
+				name: "",
 			},
 		],
 		customPresets: {} as any,
