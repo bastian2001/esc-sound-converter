@@ -471,8 +471,8 @@ p {
 	font-size: 1rem;
 }
 .inputWrapper p.active {
-	transform: translate(-0.4rem, -0.8rem);
-	font-size: 0.71rem;
+	transform: translate(-0.6rem, -0.8rem) scale(0.7);
+	/* font-size: 0.71rem; */
 }
 
 .red {

@@ -67,11 +67,29 @@ export default {
 
 		// Track an event. It can be anything, but in this example, we're tracking a Signed Up event.
 		// Include a property about the signup, like the Signup Type
-		mixpanel.track("Opened website", {
-			Component: "App.vue",
-		})
+		if (window.location.href.includes("bastianspringer.eu") && this.getCookie("noMixpanel") === "")
+			mixpanel.track("Opened website", {
+				Component: "App.vue",
+			})
+		else if (window.location.href.includes("bastianspringer.eu")) console.log("Mixpanel disabled")
+		else console.log("Not on bastianspringer.eu")
 	},
 	methods: {
+		getCookie(cname: string) {
+			let name = cname + "="
+			let decodedCookie = decodeURIComponent(document.cookie)
+			let ca = decodedCookie.split(";")
+			for (let i = 0; i < ca.length; i++) {
+				let c = ca[i]
+				while (c.charAt(0) == " ") {
+					c = c.substring(1)
+				}
+				if (c.indexOf(name) == 0) {
+					return c.substring(name.length, c.length)
+				}
+			}
+			return ""
+		},
 		calcTime(index: number, time: string) {
 			this.times[index] = time
 			this.timeEqual = true
