@@ -1,21 +1,30 @@
 <template>
 	<div class="main-wrapper">
+		<div id="rangerInfo" v-if="rangerOpen">
+			<i class="fa-solid fa-x fa-fw rangerClose" @click="closeRanger"></i>
+			<i class="fa-solid fa-wifi fa-fw rangerWifi"></i>&nbsp;
+			<a href="https://www.thingiverse.com/thing:5984569">Got an old Ranger Micro PCB? Make a second Ranger.</a>
+		</div>
 		<div id="introBackground" :class="{ hide: hideIntro }" @click="hideIntro = true">
 			<div id="intro" @click="$event.stopPropagation()">
 				<h2>ESC Sound Converter</h2>
 				<p class="introText">
-					This is a tool to convert BlHeli_32 and Bluejay startup sounds between each other.<br />Use the Transpose
-					buttons if your sounds are too high or too low for your system. BlHeli32 allows you to go higher, while
-					Bluejay goes lower.<br />If you find any bugs or have any suggestions, please open an issue on
-					<a href="https://github.com/Bastian2001/esc-sound-converter/issues/new" style="color: inherit !important"
+					This is a tool to convert BlHeli_32 and Bluejay startup sounds between each other.<br />Use the
+					Transpose buttons if your sounds are too high or too low for your system. BlHeli32 allows you to go
+					higher, while Bluejay goes lower.<br />If you find any bugs or have any suggestions, please open an
+					issue on
+					<a
+						href="https://github.com/Bastian2001/esc-sound-converter/issues/new"
+						style="color: inherit !important"
 						>Github</a
 					>.<br /><br />
 					Two important things to note:<br />
-					1. When you convert a Bluejay sound to BlHeli_32, always set the "Gen. Interval" to 0. Otherwise there will be
-					a pause between each note. Other values only make sense if all ESCs are following the exact same rhythm.<br />
-					2. I am not sure which note lengths exactly work with Bluejay. Therefore, there are only warnings for
-					BlHeli_32 note lengths. It is likely that Bluejay supports a few more than BlHeli_32. If you find a source
-					which ones work, please tell me.
+					1. When you convert a Bluejay sound to BlHeli_32, always set the "Gen. Interval" to 0. Otherwise
+					there will be a pause between each note. Other values only make sense if all ESCs are following the
+					exact same rhythm.<br />
+					2. I am not sure which note lengths exactly work with Bluejay. Therefore, there are only warnings
+					for BlHeli_32 note lengths. It is likely that Bluejay supports a few more than BlHeli_32. If you
+					find a source which ones work, please tell me.
 				</p>
 				<div class="alignright"><button @click="hideIntro = true">Got it!</button></div>
 			</div>
@@ -23,8 +32,8 @@
 		<div class="header">
 			<h2>ESC Sound Converter</h2>
 			<p :class="{ hide: timeEqual }" class="warningText">
-				<i class="fa-solid fa-triangle-exclamation"></i>&nbsp;&nbsp;Unequal lengths lead to asynchronous beeps at the
-				end of the start sequence.
+				<i class="fa-solid fa-triangle-exclamation"></i>&nbsp;&nbsp;Unequal lengths lead to asynchronous beeps
+				at the end of the start sequence.
 			</p>
 			<PresetManager />
 		</div>
@@ -32,7 +41,9 @@
 		<Converter @time="$event => calcTime(1, $event)" :time-equal="timeEqual" :slot="1" />
 		<Converter @time="$event => calcTime(2, $event)" :time-equal="timeEqual" :slot="2" />
 		<Converter @time="$event => calcTime(3, $event)" :time-equal="timeEqual" :slot="3" />
-		<a href="https://github.com/Bastian2001/esc-sound-converter" id="githublink"><i class="fa-brands fa-github"></i></a>
+		<a href="https://github.com/Bastian2001/esc-sound-converter" id="githublink"
+			><i class="fa-brands fa-github"></i
+		></a>
 	</div>
 </template>
 
@@ -49,6 +60,7 @@ export default {
 			times: ["0.00", "0.00", "0.00", "0.00"],
 			hideIntro: false,
 			notesStore: notesStore(),
+			rangerOpen: true,
 		}
 	},
 	components: {
@@ -57,6 +69,8 @@ export default {
 	},
 	mounted() {
 		this.notesStore.init()
+
+		this.rangerOpen = this.getCookie("rangerOpen") !== "false"
 
 		// Replace YOUR_TOKEN with your Project Token
 		mixpanel.init("46d77b7db9fde5f907ed589c9eb66537", { debug: true, ignore_dnt: true })
@@ -75,6 +89,10 @@ export default {
 		else console.log("Not on bastianspringer.eu")
 	},
 	methods: {
+		closeRanger() {
+			this.rangerOpen = false
+			this.setCookie("rangerOpen", "false", 365)
+		},
 		getCookie(cname: string) {
 			let name = cname + "="
 			let decodedCookie = decodeURIComponent(document.cookie)
@@ -89,6 +107,12 @@ export default {
 				}
 			}
 			return ""
+		},
+		setCookie(cname: string, cvalue: string, exdays: number) {
+			const d = new Date()
+			d.setTime(d.getTime() + exdays * 24 * 60 * 60 * 1000)
+			let expires = "expires=" + d.toUTCString()
+			document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/"
 		},
 		calcTime(index: number, time: string) {
 			this.times[index] = time
@@ -127,6 +151,27 @@ export default {
 p {
 	font-family: Verdana, Geneva, Tahoma, sans-serif;
 	margin-top: 1rem;
+}
+
+#rangerInfo {
+	z-index: 1;
+	position: absolute;
+	top: 1rem;
+	right: 1rem;
+	color: #eed;
+	font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+.rangerClose {
+	display: none;
+}
+#rangerInfo:hover .rangerClose {
+	display: inline;
+}
+#rangerInfo:hover .rangerWifi {
+	display: none;
+}
+a {
+	color: #eed;
 }
 
 #introBackground {
