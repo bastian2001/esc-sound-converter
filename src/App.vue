@@ -163,6 +163,13 @@ p {
 }
 .rangerClose {
 	display: none;
+	padding: 3px 6px;
+}
+.rangerClose:hover {
+	background-color: #fff2;
+}
+.rangerWifi {
+	padding: 2px 3px;
 }
 #rangerInfo:hover .rangerClose {
 	display: inline;
